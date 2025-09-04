@@ -1,8 +1,10 @@
-FROM python:3.11-slim-bullseye
+# Use Python 3.10 para compatibilidade com OpenCV 4.10.0.46
+FROM python:3.10-slim-bullseye
 
+# Define o diretório de trabalho
 WORKDIR /app
 
-# Dependências de sistema
+# Instala dependências de sistema necessárias
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
@@ -17,14 +19,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Atualiza pip
 RUN pip install --upgrade pip
 
-# Instala dependências Python
+# Copia requirements.txt e instala dependências Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o código
+# Copia o código do projeto
 COPY . .
 
-# Porta do Django
+# Expõe a porta do Django
 EXPOSE 8000
 
 # Comando para rodar o Django
