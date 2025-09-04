@@ -26,7 +26,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir numpy==1.23.5
 
 # Instala OpenCV sem instalar dependências (não vai mexer no numpy)
-RUN pip install --no-cache-dir opencv-python==4.10.0.46 --no-deps
+RUN pip install --no-cache-dir opencv-python==4.12.0.88 --no-deps
 
 # Instala o restante das dependências do requirements.txt (exceto numpy e opencv)
 RUN pip install --no-cache-dir \
