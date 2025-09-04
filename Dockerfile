@@ -1,8 +1,10 @@
-FROM python:3.11-slim-bullseye
+# Base Python 3.10 slim
+FROM python:3.10-slim-bullseye
 
+# Define diretório de trabalho
 WORKDIR /app
 
-# Dependências de sistema necessárias para OpenCV e outros pacotes
+# Instala dependências de sistema necessárias para OpenCV e dlib
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
@@ -18,23 +20,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copia o requirements.txt
 COPY requirements.txt .
 
-# Instala numpy primeiro (evita conflito com opencv)
+# Instala numpy primeiro para evitar conflito com OpenCV
 RUN pip install --no-cache-dir numpy==1.23.5
 
-# Instala OpenCV sem dependências para não sobrescrever o numpy
+# Instala OpenCV sem sobrescrever numpy
 RUN pip install --no-cache-dir opencv-python==4.10.0.84 --no-deps
 
-# Cria um requirements sem numpy e opencv
-RUN grep -vE "^(numpy|opencv-python)" requirements.txt > requirements-no-numpy.txt
+# Copia o seu .whl do dlib (Python 3.10)
+COPY dlib-19.24.4-cp310-cp310-manylinux_2_28_x86_64.whl .
+
+# Instala o dlib via .whl
+RUN pip install --no-cache-dir dlib-19.24.4-cp310-cp310-manylinux_2_28_x86_64.whl
+
+# Cria um requirements sem numpy, opencv e dlib
+RUN grep -vE "^(numpy|opencv-python|dlib)" requirements.txt > requirements-no-numpy.txt
 
 # Instala o restante das dependências
 RUN pip install --no-cache-dir -r requirements-no-numpy.txt
 
-# Copia o restante do código
+# Copia todo o código da aplicação
 COPY . .
 
 # Expõe a porta padrão do Django
 EXPOSE 8000
 
-# Comando de inicialização
+# Comando para rodar o servidor Django
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
