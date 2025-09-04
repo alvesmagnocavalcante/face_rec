@@ -1,10 +1,10 @@
-# Use Python 3.10 para compatibilidade com numpy 1.23.5 e OpenCV 4.10.0.46
-FROM python:3.10-slim-bullseye
+# Usa Python 3.9 slim
+FROM python:3.9-slim-bullseye
 
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Instala dependências de sistema necessárias
+# Instala dependências do sistema
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
@@ -13,30 +13,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libopenjp2-7-dev \
     libtiff-dev \
     libwebp-dev \
-    python3-dev \
- && rm -rf /var/lib/apt/lists/*
-
-# Atualiza pip
-RUN pip install --upgrade pip
+    && rm -rf /var/lib/apt/lists/*
 
 # Copia requirements.txt
 COPY requirements.txt .
 
-# Instala numpy primeiro
+# Remove BOM escondido (UTF-8 com BOM)
+RUN sed -i '1s/^\xef\xbb\xbf//' requirements.txt
+
+# Instala numpy primeiro (fixando versão que funciona)
 RUN pip install --no-cache-dir numpy==1.23.5
 
-# Instala OpenCV sem instalar dependências (não vai mexer no numpy)
-RUN pip install --no-cache-dir opencv-python==4.12.0.88 --no-deps
+# Instala OpenCV sem dependências (não vai mexer no numpy)
+RUN pip install --no-cache-dir opencv-python==4.10.0.46 --no-deps
 
-# Instala o restante das dependências do requirements.txt (exceto numpy e opencv)
-RUN pip install --no-cache-dir \
-    $(grep -vE "^(numpy|opencv-python)" requirements.txt)
+# Instala o restante das dependências (exceto numpy e opencv)
+RUN pip install --no-cache-dir -r <(grep -vE "^(numpy|opencv-python)" requirements.txt)
 
-# Copia o código do projeto
+# Copia o resto do código
 COPY . .
 
-# Expõe a porta do Django
+# Expõe a porta
 EXPOSE 8000
 
-# Comando para rodar o Django
+# Comando padrão do Django
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
