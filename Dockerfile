@@ -1,10 +1,10 @@
-# Usa Python 3.9 slim
-FROM python:3.9-slim-bullseye
+# Usa uma imagem Python mais recente e estável
+FROM python:3.11-slim-bullseye
 
-# Define o diretório de trabalho
+# Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
-# Instala dependências do sistema
+# Instala dependências de sistema necessárias
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
@@ -15,26 +15,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libwebp-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia requirements.txt
+# Copia o arquivo requirements.txt
 COPY requirements.txt .
 
-# Remove BOM escondido (UTF-8 com BOM)
-RUN sed -i '1s/^\xef\xbb\xbf//' requirements.txt
-
-# Instala numpy primeiro (fixando versão que funciona)
+# Instala numpy primeiro (fixando versão do projeto)
 RUN pip install --no-cache-dir numpy==1.23.5
 
-# Instala OpenCV sem dependências (não vai mexer no numpy)
-RUN pip install --no-cache-dir opencv-python==4.10.0.46 --no-deps
+# Instala OpenCV sem dependências (para não sobrescrever o numpy)
+RUN pip install --no-cache-dir opencv-python==4.10.0.84 --no-deps
 
-# Instala o restante das dependências (exceto numpy e opencv)
+# Instala o restante das dependências (ignorando numpy e opencv já instalados)
 RUN pip install --no-cache-dir -r <(grep -vE "^(numpy|opencv-python)" requirements.txt)
 
-# Copia o resto do código
+# Copia o restante do código da aplicação
 COPY . .
 
-# Expõe a porta
+# Expõe a porta do Django
 EXPOSE 8000
 
-# Comando padrão do Django
+# Comando padrão para rodar o servidor
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
