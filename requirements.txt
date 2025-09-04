@@ -1,8 +1,9 @@
 ﻿asgiref==3.9.1
 Django==5.2.6
 numpy==1.23.5
-opencv-python-headless==4.12.0.88
+opencv-python==4.10.0.46
 sqlparse==0.5.3
 typing_extensions==4.15.0
 tzdata==2025.2
+
 
