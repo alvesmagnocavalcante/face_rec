@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'facerec_app',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://face-rec-5exa.onrender.com',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
