@@ -27,10 +27,10 @@ RUN pip install --no-cache-dir numpy==1.23.5
 RUN pip install --no-cache-dir opencv-python==4.10.0.46 --no-deps
 
 # Copia o .whl do dlib para a imagem (ajuste o caminho se estiver em subpasta)
-COPY dlib-19.24.4-cp310-cp310-manylinux_2_28_x86_64.whl .
+COPY dlib-19.22.99-cp310-cp310-win_amd64.whl .
 
 # Instala o dlib via .whl
-RUN pip install --no-cache-dir dlib-19.24.4-cp310-cp310-manylinux_2_28_x86_64.whl
+RUN pip install --no-cache-dir dlib-19.22.99-cp310-cp310-win_amd64.whl
 
 # Instala o restante das dependências (excluindo numpy, opencv e dlib)
 RUN grep -vE "^(numpy|opencv-python|dlib)" requirements.txt > requirements-no-numpy.txt
