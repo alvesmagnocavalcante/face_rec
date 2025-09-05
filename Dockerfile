@@ -24,7 +24,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir numpy==1.23.5
 
 # Instala OpenCV sem sobrescrever numpy
-RUN pip install --no-cache-dir opencv-python==4.10.0.46 --no-deps
+RUN pip install --no-cache-dir opencv-python==4.10.0.84 --no-deps
 
 # Copia o .whl do dlib para a imagem (ajuste o caminho se estiver em subpasta)
 COPY dlib-19.22.99-cp310-cp310-win_amd64.whl .
