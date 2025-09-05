@@ -1,7 +1,7 @@
-# Use Python 3.10 slim
+# Base Python 3.10 slim
 FROM python:3.10-slim-bullseye
 
-# Diretório de trabalho
+# Define diretório de trabalho
 WORKDIR /app
 
 # Instala dependências de sistema necessárias para OpenCV e dlib
@@ -26,14 +26,11 @@ RUN pip install --no-cache-dir numpy==1.23.5
 # Instala OpenCV sem sobrescrever numpy
 RUN pip install --no-cache-dir opencv-python==4.10.0.84 --no-deps
 
-# Copia o .whl do dlib para a imagem (ajuste o caminho se estiver em subpasta)
-COPY dlib-19.22.99-cp310-cp310-win_amd64.whl .
-
-# Instala o dlib via .whl
-RUN pip install --no-cache-dir dlib-19.22.99-cp310-cp310-win_amd64.whl
+# Instala dlib via dlib-bin (pré-compilado para Linux)
+RUN pip install --no-cache-dir dlib-bin==19.24.6
 
 # Instala o restante das dependências (excluindo numpy, opencv e dlib)
-RUN grep -vE "^(numpy|opencv-python|dlib)" requirements.txt > requirements-no-numpy.txt
+RUN grep -vE "^(numpy|opencv-python|dlib|dlib-bin)" requirements.txt > requirements-no-numpy.txt
 RUN pip install --no-cache-dir -r requirements-no-numpy.txt
 
 # Copia todo o código da aplicação
